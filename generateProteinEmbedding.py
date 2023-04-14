@@ -47,8 +47,8 @@ def generate_embeddings(model_link, sequence_examples, per_protein= True, per_re
   return embeddings_per_protein, embeddings_per_residue
 
 
-#Testing the function with dummy data
-sequence_examples = ["PRTEINO", "SEQWENCE"]
-transformer_link = "Rostlab/prot_t5_xl_half_uniref50-enc"
-embeddings_per_protein,embeddings_per_residue = generate_embeddings(transformer_link,sequence_examples)
-embeddings_per_protein
+# #Testing the function with dummy data
+# sequence_examples = ["PRTEINO", "SEQWENCE"]
+# transformer_link = "Rostlab/prot_t5_xl_half_uniref50-enc"
+# embeddings_per_protein,embeddings_per_residue = generate_embeddings(transformer_link,sequence_examples)
+# embeddings_per_protein
