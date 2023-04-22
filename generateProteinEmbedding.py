@@ -8,11 +8,12 @@ from transformers import T5Tokenizer, T5EncoderModel
 import torch
 import re
 
-device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-print("Using device: {}".format(device))
 
-def generate_embeddings(model_link, sequence_examples, per_protein= True, per_residue=False,):
+
+def generate_embeddings(model_link= "Rostlab/prot_t5_xl_half_uniref50-enc", sequence_examples, per_protein= True, per_residue=False, output_hidden_states=False, num_hidden_states=4):
   
+  num_of_sequences=len(sequence_examples)
+
   #Loading encoder model from URL
   print("Loading: {}".format(model_link))
   model = T5EncoderModel.from_pretrained(model_link)  
@@ -33,22 +34,24 @@ def generate_embeddings(model_link, sequence_examples, per_protein= True, per_re
 
   # generate embeddings
   with torch.no_grad():
-    embedding_repr = model(input_ids=input_ids,attention_mask=attention_mask)
+    embedding_repr = model(input_ids=input_ids,attention_mask=attention_mask,output_hidden_states=output_hidden_states)
 
   embeddings_per_protein = []
   embeddings_per_residue = []
-  for i in range(len(sequence_examples)):
+  last_4_hidden_states=[]
+  
+  for i in range(num_of_sequences):
     if per_protein:
       embeddings_per_protein.append(embedding_repr.last_hidden_state[0,:len(sequence_examples[i])].mean(dim=0))
+      if output_hidden_states:
+        for i in range(1,num_hidden_states+1):
+        last_4_hidden_states.append(embedding_repr.hidden_states[-i][0].mean(dim=0))
+        # last_4_hidden_states.append(embedding_repr.hidden_states[-2][0].mean(dim=0))
+        # last_4_hidden_states.append(embedding_repr.hidden_states[-3][0].mean(dim=0))
+        # last_4_hidden_states.append(embedding_repr.hidden_states[-4][0].mean(dim=0))
 
     if per_residue:
-      embeddings_per_residue.append(embedding_repr.last_hidden_state[0,:len(sequence_examples[i])])
+      embeddings_per_residue.append(embedding_repr.last_hidden_state[0,:len(sequence_examples[i])].cpu().numpy())
 
-  return embeddings_per_protein, embeddings_per_residue
-
-
-# #Testing the function with dummy data
-# sequence_examples = ["PRTEINO", "SEQWENCE"]
-# transformer_link = "Rostlab/prot_t5_xl_half_uniref50-enc"
-# embeddings_per_protein,embeddings_per_residue = generate_embeddings(transformer_link,sequence_examples)
-# embeddings_per_protein
+  return embeddings_per_protein, embeddings_per_residue, last_4_hidden_states
+  
