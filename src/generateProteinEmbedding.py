@@ -45,7 +45,7 @@ def generate_embeddings(model_link, sequence_examples, per_protein= True, per_re
       embeddings_per_protein.append(embedding_repr.last_hidden_state[0,:len(sequence_examples[i])].mean(dim=0))
       if output_hidden_states:
         for i in range(1,num_hidden_states+1):
-        last_4_hidden_states.append(embedding_repr.hidden_states[-i][0].mean(dim=0))
+          last_4_hidden_states.append(embedding_repr.hidden_states[-i][0].mean(dim=0))
         # last_4_hidden_states.append(embedding_repr.hidden_states[-2][0].mean(dim=0))
         # last_4_hidden_states.append(embedding_repr.hidden_states[-3][0].mean(dim=0))
         # last_4_hidden_states.append(embedding_repr.hidden_states[-4][0].mean(dim=0))
