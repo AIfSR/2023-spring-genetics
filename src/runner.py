@@ -45,7 +45,7 @@ output_hidden_states=True  #Set true if you want to concatenate embeddings of la
 num_hidden_states=4  #number of hidden layers retrieved 
 
 for s in range(len(sequences)):
-  embeddings_per_protein,embeddings_per_residue, hidden_states = generate_embeddings(transformer_link,[sequences[s]],output_hidden_states=output_hidden_states, num_hidden_states)
+  embeddings_per_protein,embeddings_per_residue, hidden_states = generate_embeddings(transformer_link,[sequences[s]],output_hidden_states, num_hidden_states)
   embeddings_per_protein = embeddings_per_protein[0].cpu().numpy()
   final_sequence = embeddings_per_protein
   

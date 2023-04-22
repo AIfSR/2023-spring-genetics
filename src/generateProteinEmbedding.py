@@ -10,7 +10,7 @@ import re
 
 
 
-def generate_embeddings(model_link= "Rostlab/prot_t5_xl_half_uniref50-enc", sequence_examples, per_protein= True, per_residue=False, output_hidden_states=False, num_hidden_states=4):
+def generate_embeddings(model_link, sequence_examples, per_protein= True, per_residue=False, output_hidden_states=False, num_hidden_states=4):
   
   num_of_sequences=len(sequence_examples)
 
