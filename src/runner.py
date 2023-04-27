@@ -27,7 +27,7 @@ print("Using device: {}".format(device))
 
 
 #Loading Sample PFAM data from csv
-df = pd.read_csv('sample_pfam')
+df = pd.read_csv('./data/sample_pfam')
 
 #creating family label - Specific to pfam data
 df['family_accession']=df.family_accession.map(lambda x : x[2:7])
@@ -41,21 +41,28 @@ labels = df_sub.family_accession.values
 
 #Creating Embeddings
 embeddings=[]
-output_hidden_states=True  #Set true if you want to concatenate embeddings of last 4 hidden layers along with the last layer
+output_hidden_states=False  #Set true if you want to concatenate embeddings of last 4 hidden layers along with the last layer
 num_hidden_states=4  #number of hidden layers retrieved 
+batch_size = 32
+iterations= len(sequences)//batch_size
 
-for s in range(len(sequences)):
-  embeddings_per_protein,embeddings_per_residue, hidden_states = generate_embeddings(transformer_link,[sequences[s]],output_hidden_states, num_hidden_states)
-  embeddings_per_protein = embeddings_per_protein[0].cpu().numpy()
-  final_sequence = embeddings_per_protein
+# embeddings_per_protein_np=[]
+
+for s in range(iterations):
+  embeddings_per_protein,embeddings_per_residue, hidden_states = generate_embeddings(transformer_link,sequences[s*batch_size:(s+1)*batch_size],output_hidden_states, num_hidden_states)
   
-  if output_hidden_states:  
-    for i in range(num_hidden_states):
-      hidden_states[i]=hidden_states[i].cpu().numpy()
-    final_sequence = np.concatenate(hidden_states)
-    final_sequence = np.concatenate([final_sequence, embeddings_per_protein])
+  for i in range(batch_size):
+    embeddings.append(embeddings_per_protein[i].cpu().numpy())
   
-  embeddings.append(final_sequence)
+  # final_sequence = embeddings_per_protein
+  
+  # if output_hidden_states:  
+  #   for i in range(num_hidden_states):
+  #     hidden_states[i]=hidden_states[i].cpu().numpy()
+  #   final_sequence = np.concatenate(hidden_states)
+  #   final_sequence = np.concatenate([final_sequence, embeddings_per_protein])
+  
+  # embeddings.append(final_sequence)
   print("Step ",s,"Completed")
 
 #Saving Embeddings
