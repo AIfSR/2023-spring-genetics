@@ -13,7 +13,7 @@ import re
 def generate_embeddings(model_link, sequence_examples, per_protein= True, per_residue=False, output_hidden_states=False, num_hidden_states=4):
   
   num_of_sequences=len(sequence_examples)
-
+  device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
   #Loading encoder model from URL
   print("Loading: {}".format(model_link))
   model = T5EncoderModel.from_pretrained(model_link)  
